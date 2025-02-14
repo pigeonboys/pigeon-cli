@@ -1,0 +1,12 @@
+#! /bin/bash
+if [ -f .env ]; then
+    export $(sed 's/#.*//g' .env | grep PROJECT_NAME=)
+
+    if [ "$1" != "bash" ] && [ "$1" != "composer" ] && [ "$1" != "npm" ] && [ "$1" != "pest" ] && [ "$1" != "pint" ]; then
+        docker exec -t $(docker ps --format '{{.Names}}' | grep $PROJECT_NAME | grep '^web') php artisan $@
+    else
+        docker exec -t $(docker ps --format '{{.Names}}' | grep $PROJECT_NAME | grep '^web') $@
+    fi
+else
+    echo "environment file (.env) does not exist"
+fi

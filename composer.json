@@ -1,0 +1,15 @@
+{
+    "bin": [
+        "scripts/fucking-docker",
+        "scripts/dock",
+        "scripts/d",
+        "scripts/s",
+        "scripts/sail",
+        "scripts/git-amnesia",
+        "scripts/up2date"
+    ],
+    "description": "This repository contains a collection of custom commands to simplify development workflows, including Docker management, Git operations, and Laravel Sail interactions.",
+    "license": "MIT",
+    "name": "pigeonboys/pigeon-cli",
+    "type": "library"
+}

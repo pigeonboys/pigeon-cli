@@ -1,0 +1,13 @@
+#! /bin/bash
+docker kill $(docker ps -q)
+
+for arg in "$@"; do
+    if [[ $arg =~ "-f" ]]; then
+        docker system prune --all --force
+        break
+    fi
+done
+
+docker system prune --volumes --force
+docker volume rm -f $(docker volume ls -f "dangling=true")
+rm /home/$USER/.docker/config.json --force

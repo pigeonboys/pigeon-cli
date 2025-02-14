@@ -1,0 +1,6 @@
+#! /bin/bash
+if [ "$1" != "bash" ] && [ "$1" != "composer" ] && [ "$1" != "npm" ] && [ "$1" != "pest" ] && [ "$1" != "pint" ]; then
+    sh vendor/bin/sail artisan $@
+else
+    sh vendor/bin/sail $@
+fi
