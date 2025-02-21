@@ -1,0 +1,47 @@
+#!/bin/bash
+STATE=$1
+TICKS=$2
+
+if [ -z "$STATE" ]; then
+    echo "Usage: antiglare <state: up|down|stop|0-100> <ticks: 0-100>"
+    exit 1
+fi
+
+STATE=$(echo $STATE | tr 'a-z' 'A-Z')
+
+if [[ "$STATE" != "UP" && "$STATE" != "DOWN" && "$STATE" != "STOP" && ! "$STATE" =~ ^[0-9]+$ ]]; then
+    echo "Error: <state> must be 'up', 'down', 'stop' or an integer between 0 and 100."
+    exit 1
+fi
+
+if [[ "$STATE" =~ ^[0-9]+$ ]] && { [ "$STATE" -lt 0 ] || [ "$STATE" -gt 100 ]; }; then
+    echo "Error: if <state> is an integer, it must be between 0 and 100."
+    exit 1
+fi
+
+if [ -z "$TICKS" ]; then
+    TICKS=0
+fi
+
+if ! [[ "$TICKS" =~ ^[0-9]+$ ]] || [ "$TICKS" -lt 0 ] || [ "$TICKS" -gt 100 ]; then
+    echo "Error: <ticks> must be a non-negative integer between 0 and 100."
+    exit 1
+fi
+
+if [ "$TICKS" -eq 0 ]; then
+    curl -X POST "$ANTIGLARE_URL" \
+        -H "Authorization: Bearer $ANTIGLARE_TOKEN" \
+        -H "Content-Type: text/plain" \
+        --data "$STATE" >/dev/null 2>&1
+else
+    for ((i = 0; i < $TICKS; i++)); do
+        curl -X POST "$ANTIGLARE_URL" \
+            -H "Authorization: Bearer $ANTIGLARE_TOKEN" \
+            -H "Content-Type: text/plain" \
+            --data "$STATE" >/dev/null 2>&1
+        curl -X POST "$ANTIGLARE_URL" \
+            -H "Authorization: Bearer $ANTIGLARE_TOKEN" \
+            -H "Content-Type: text/plain" \
+            --data "STOP" >/dev/null 2>&1
+    done
+fi
