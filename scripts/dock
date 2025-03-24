@@ -1,3 +1,6 @@
 #! /bin/bash
-export $(grep -v '^#' $PWD/.env | xargs)
+while IFS= read -r line; do
+    [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
+    export "$line"
+done < "$PWD/.env"
 docker exec -it $(docker ps --format '{{.Names}}' | grep $PROJECT_NAME | grep '^web') bash
